@@ -206,6 +206,52 @@ export const styles = css`
     height: 110px;
     justify-content: flex-end;
   }
+  .battery-units {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 16px 16px;
+    box-sizing: border-box;
+  }
+  .battery-unit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 4px 10px;
+    border: 1px solid var(--circle-battery-color);
+    border-radius: 16px;
+    font-size: 12px;
+    line-height: 1.2;
+    cursor: var(--clickable-cursor);
+    overflow: hidden;
+  }
+  .battery-unit ha-icon.battery-unit-icon {
+    --mdc-icon-size: 16px;
+    padding-bottom: 0;
+    color: var(--icon-battery-color);
+  }
+  .battery-unit-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--secondary-text-color);
+  }
+  .battery-unit-soc {
+    color: var(--text-battery-state-of-charge-color);
+    font-weight: 500;
+  }
+  .battery-unit-power {
+    white-space: nowrap;
+  }
+  .battery-unit-power.battery-unit-in {
+    color: var(--text-battery-in-color);
+  }
+  .battery-unit-power.battery-unit-out {
+    color: var(--text-battery-out-color);
+  }
   .spacer {
     width: var(--size-circle-entity);
   }

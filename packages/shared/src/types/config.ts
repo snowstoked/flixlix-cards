@@ -1,4 +1,5 @@
 import {
+  type ActionConfigSet,
   type BaseConfigEntity,
   type ComboEntity,
   type GridPowerOutage,
@@ -63,7 +64,26 @@ export interface EnergyFlowCardPlusConfig extends LovelaceCardConfig, mainConfig
 
 export type IndividualField = IndividualDeviceType[];
 
+/**
+ * An additional battery unit. The main `entities.battery` entry is unit 1,
+ * every item in `entities.battery.batteries` is another unit.
+ */
+export interface BatteryUnit extends ActionConfigSet {
+  entity: string | ComboEntity;
+  name?: string;
+  icon?: string;
+  state_of_charge?: string;
+  /** Falls back to the main battery's `invert_state` when not set. */
+  invert_state?: boolean;
+  /** Usable capacity (any unit, only the ratio matters) used to weight the combined state of charge. */
+  capacity?: number;
+}
+
 interface Battery extends BaseConfigEntity {
+  /** Usable capacity of the main battery, used to weight the combined state of charge. */
+  capacity?: number;
+  /** Additional battery units (2..n). Flows show the sum of all units. */
+  batteries?: BatteryUnit[];
   state_of_charge?: string;
   state_of_charge_unit?: string;
   state_of_charge_unit_white_space?: boolean;

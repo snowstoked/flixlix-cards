@@ -195,3 +195,51 @@ describe("_computeRenderData", () => {
     expect(Number.isNaN(data.solar.state.total)).toBe(false);
   });
 });
+
+describe("multiple batteries", () => {
+  const multiConfig = {
+    type: "custom:power-flow-card-plus",
+    entities: {
+      grid: { entity: "sensor.grid" },
+      battery: {
+        entity: "sensor.battery_1",
+        state_of_charge: "sensor.battery_1_soc",
+        batteries: [
+          { entity: "sensor.battery_2", state_of_charge: "sensor.battery_2_soc", name: "Garage" },
+        ],
+      },
+    },
+  } as unknown as PowerFlowCardPlusConfig;
+
+  test("flows use the sum of all batteries and every unit is listed", () => {
+    // both discharge: 300 W + 200 W
+    const hass = makeHass({
+      "sensor.grid": "0",
+      "sensor.battery_1": "300",
+      "sensor.battery_2": "200",
+      "sensor.battery_1_soc": "80",
+      "sensor.battery_2_soc": "40",
+    });
+    const card = makeCard(multiConfig, hass);
+    const data = card._computeRenderData() as any;
+
+    expect(data.battery.state.fromBattery).toBe(500);
+    expect(data.battery.state.toHome).toBe(500);
+    expect(data.battery.state_of_charge.state).toBe(60);
+    expect(data.batteryUnits).toHaveLength(2);
+    expect(data.batteryUnits[1].name).toBe("Garage");
+    expect(card.render()).toBeTruthy();
+  });
+
+  test("single battery config has no unit overview", () => {
+    const config = {
+      type: "custom:power-flow-card-plus",
+      entities: { battery: { entity: "sensor.battery_1" } },
+    } as PowerFlowCardPlusConfig;
+    const card = makeCard(config, makeHass({ "sensor.battery_1": "100" }));
+    const data = card._computeRenderData() as any;
+
+    expect(data.batteryUnits).toHaveLength(1);
+    expect(data.battery.state.fromBattery).toBe(100);
+  });
+});

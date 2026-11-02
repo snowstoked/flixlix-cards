@@ -218,6 +218,30 @@ At least one of _grid_, _battery_, or _solar_ is required. All entites (except _
 | color_value                      | `boolean`                                                      | `true`                                                 | If set to `false`, the values of power will not be colored according to input and output.                                                                                                                                                                                                                                                                                                     |
 | invert_state                     | `boolean`                                                      | `false`                                                | If set to true the direction as well as the values will be inverted, meaning a positive value will be shown as production and a negative value will be shown as consumption.                                                                                                                                                                                                                  |
 
+##### Multiple batteries
+
+Add further batteries with `batteries` inside the battery configuration. The main battery entry is battery 1, every item in `batteries` is another unit. The battery circle and all flow lines show the **sum** of all batteries (units charging and discharging at the same time are netted), and a compact overview with the state of charge and power of every battery is shown below the diagram. Configurations without `batteries` render exactly as before.
+
+| Name         | Type      | Default                        | Description                                                                                                                                                                                      |
+| ------------ | --------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| batteries    | `list`    | `undefined`                    | Additional batteries (2..n). Each item supports `entity`, `state_of_charge`, `name`, `icon`, `invert_state`, `capacity` and `tap_action`/`hold_action`/`double_tap_action`.                      |
+| capacity     | `number`  | `undefined`                    | Usable capacity of a battery (any unit, only the ratio matters). If set on every battery with a state of charge, the combined state of charge is capacity weighted, otherwise it is the average. |
+| invert_state | `boolean` | inherits from the main battery | Per additional battery, defaults to the `invert_state` of the main battery.                                                                                                                      |
+
+```yaml
+entities:
+  battery:
+    entity: sensor.battery_1_power
+    state_of_charge: sensor.battery_1_soc
+    name: House
+    capacity: 10
+    batteries:
+      - entity: sensor.battery_2_power # or { consumption: ..., production: ... }
+        state_of_charge: sensor.battery_2_soc
+        name: Garage
+        capacity: 5
+```
+
 #### Individual Configuration
 
 The Individual fields must be an array of objects. Each object must follow the following structure:

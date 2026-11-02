@@ -1,4 +1,5 @@
 import { batteryElement } from "@flixlix-cards/shared/components/battery";
+import { batteryUnitsElement } from "@flixlix-cards/shared/components/battery-units";
 import { flowElement } from "@flixlix-cards/shared/components/flows/index";
 import { gridElement } from "@flixlix-cards/shared/components/grid";
 import { homeElement } from "@flixlix-cards/shared/components/home";
@@ -18,9 +19,11 @@ import {
 } from "@flixlix-cards/shared/ha/template/ha-websocket";
 import localize from "@flixlix-cards/shared/i18n";
 import {
+  type BatteryUnitState,
   getBatteryInState,
   getBatteryOutState,
   getBatteryStateOfCharge,
+  getBatteryUnitStates,
 } from "@flixlix-cards/shared/states/raw/battery";
 import {
   getGridConsumptionState,
@@ -117,6 +120,7 @@ export class PowerFlowCardPlus extends LitElement {
         grid: GridObject;
         solar: any;
         battery: any;
+        batteryUnits: BatteryUnitState[];
         home: any;
         nonFossil: any;
         individualObjs: IndividualObject[];
@@ -363,6 +367,7 @@ export class PowerFlowCardPlus extends LitElement {
       grid,
       solar,
       battery,
+      batteryUnits,
       home,
       nonFossil,
       individualObjs,
@@ -498,6 +503,12 @@ export class PowerFlowCardPlus extends LitElement {
             solar,
           })}
         </div>
+        ${battery.has
+          ? batteryUnitsElement(this, this._config, {
+              units: batteryUnits,
+              fallbackName: battery.name,
+            })
+          : nothing}
         ${dashboardLinkElement(this._config, this.hass)}
       </ha-card>
     `;
@@ -1043,6 +1054,7 @@ export class PowerFlowCardPlus extends LitElement {
       grid,
       solar,
       battery,
+      batteryUnits: getBatteryUnitStates(this.hass, this._config),
       home,
       nonFossil,
       individualObjs: visibleIndividualObjects,

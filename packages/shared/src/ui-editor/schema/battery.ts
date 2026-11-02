@@ -43,6 +43,11 @@ const stateOfChargeSchema = [
     selector: { entity: {} },
   },
   {
+    name: "capacity",
+    label: "Capacity (used to weight the state of charge of multiple batteries)",
+    selector: { number: { mode: "box", min: 0, step: "any" } },
+  },
+  {
     name: "",
     type: "grid",
     column_min_width: "200px",
@@ -95,6 +100,20 @@ export const batterySchema = [
     name: "",
     type: "expandable",
     schema: stateOfChargeSchema,
+  },
+  {
+    title: localize("editor.batteries"),
+    name: "",
+    type: "expandable",
+    schema: [
+      {
+        // Additional batteries (2..n). Edit as YAML, each item supports:
+        // entity, state_of_charge, name, icon, invert_state, capacity and the action fields.
+        name: "batteries",
+        label: "Additional batteries (YAML list)",
+        selector: { object: {} },
+      },
+    ],
   },
   mainSchema,
   customColorsSchema,
